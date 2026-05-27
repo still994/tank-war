@@ -102,40 +102,35 @@ function drawBrickTile(x, y, r, c) {
 
   ctx.fillStyle = '#1a1a2e'; // match canvas background
   const dirs = dmg.dirs;
-  for (let i = 0; i < dirs.length; i++) {
-    const dir = dirs[i];
-    const isLastDifferent = (i === dirs.length - 1 && dirs.length >= 2);
-    const portion = isLastDifferent ? 0.5 : 1 / 3;
-    // Damage appears on the side the bullet came FROM (opposite to bullet dir)
-    switch (dir) {
-      case DIR.UP:    // bullet from below → damage bottom
-        ctx.fillRect(x, y + TILE * (1 - portion), TILE, TILE * portion);
-        break;
-      case DIR.DOWN:  // bullet from above → damage top
-        ctx.fillRect(x, y, TILE, TILE * portion);
-        break;
-      case DIR.LEFT:  // bullet from right → damage right
-        ctx.fillRect(x + TILE * (1 - portion), y, TILE * portion, TILE);
-        break;
-      case DIR.RIGHT: // bullet from left → damage left
-        ctx.fillRect(x, y, TILE * portion, TILE);
-        break;
+  if (dirs.length === 1) {
+    // Single direction: use exact damage amount as the portion
+    const dir = dirs[0];
+    const portion = dmg.amount;
+    drawDamageChunk(x, y, dir, portion);
+  } else {
+    // Multiple directions: first = 1/3 each, last (different dir) = 1/2
+    for (let i = 0; i < dirs.length; i++) {
+      const portion = (i === dirs.length - 1) ? 0.5 : 1 / 3;
+      drawDamageChunk(x, y, dirs[i], portion);
     }
   }
-  // For same-direction double-hit (amount≈2/3, 1 dir), show the larger chunk
-  if (dirs.length === 1 && dmg.amount >= 0.5) {
-    const dir = dirs[0];
-    // Damage appears on the side the bullet came FROM
-    switch (dir) {
-      case DIR.UP:    // bullet from below → damage bottom 2/3
-        ctx.fillRect(x, y + TILE * (1 / 3), TILE, TILE * (2 / 3)); break;
-      case DIR.DOWN:  // bullet from above → damage top 2/3
-        ctx.fillRect(x, y, TILE, TILE * (2 / 3)); break;
-      case DIR.LEFT:  // bullet from right → damage right 2/3
-        ctx.fillRect(x + TILE * (1 / 3), y, TILE * (2 / 3), TILE); break;
-      case DIR.RIGHT: // bullet from left → damage left 2/3
-        ctx.fillRect(x, y, TILE * (2 / 3), TILE); break;
-    }
+}
+
+function drawDamageChunk(x, y, dir, portion) {
+  // Damage appears on the side the bullet came FROM (opposite to bullet dir)
+  switch (dir) {
+    case DIR.UP:    // bullet from below → damage bottom
+      ctx.fillRect(x, y + TILE * (1 - portion), TILE, TILE * portion);
+      break;
+    case DIR.DOWN:  // bullet from above → damage top
+      ctx.fillRect(x, y, TILE, TILE * portion);
+      break;
+    case DIR.LEFT:  // bullet from right → damage right
+      ctx.fillRect(x + TILE * (1 - portion), y, TILE * portion, TILE);
+      break;
+    case DIR.RIGHT: // bullet from left → damage left
+      ctx.fillRect(x, y, TILE * portion, TILE);
+      break;
   }
 }
 

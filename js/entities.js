@@ -246,6 +246,10 @@ class Bullet {
 
   update() {
     if (!this.alive) return;
+
+    // Check wall at current position BEFORE moving (catches close-range / spawn-in-brick)
+    if (this.checkWallCollision()) return;
+
     this.x += DX[this.dir] * this.speed;
     this.y += DY[this.dir] * this.speed;
 
@@ -255,39 +259,8 @@ class Bullet {
       return;
     }
 
-    const cx = this.x + this.size / 2;
-    const cy = this.y + this.size / 2;
-    const col = Math.floor(cx / TILE);
-    const row = Math.floor(cy / TILE);
-
-    // Wall collision
-    if (row >= 0 && row < ROWS && col >= 0 && col < COLS) {
-      const tile = game.map[row][col];
-      if (tile === BRICK) {
-        const destroyed = damageBrick(row, col, this.dir);
-        this.alive = false;
-        game.explosions.push(new Explosion(col * TILE + TILE / 2, row * TILE + TILE / 2, destroyed));
-        soundHit();
-        if (destroyed && Math.random() < FRUIT_DROP_CHANCE * 0.4) {
-          spawnFruit();
-        }
-        return;
-      }
-      // Glass barriers stop normal bullets. Level-3 player bullets break them.
-      if (tile === STEEL || tile === GLASS) {
-        if (this.penetrateGlass) {
-          game.map[row][col] = EMPTY;
-          game.explosions.push(new Explosion(col * TILE + TILE / 2, row * TILE + TILE / 2, false));
-          soundHit();
-        } else {
-          this.alive = false;
-          game.explosions.push(new Explosion(col * TILE + TILE / 2, row * TILE + TILE / 2, false));
-          soundHit();
-          return;
-        }
-      }
-      // Grass — bullet passes through (handled implicitly)
-    }
+    // Wall collision after moving
+    if (this.checkWallCollision()) return;
 
     // Base collision — any bullet can destroy the base
     if (game.baseAlive) {
@@ -343,6 +316,38 @@ class Bullet {
         }
       }
     }
+  }
+
+  checkWallCollision() {
+    const cx = this.x + this.size / 2;
+    const cy = this.y + this.size / 2;
+    const col = Math.floor(cx / TILE);
+    const row = Math.floor(cy / TILE);
+    if (row < 0 || row >= ROWS || col < 0 || col >= COLS) return false;
+    const tile = game.map[row][col];
+    if (tile === BRICK) {
+      const destroyed = damageBrick(row, col, this.dir);
+      this.alive = false;
+      game.explosions.push(new Explosion(col * TILE + TILE / 2, row * TILE + TILE / 2, destroyed));
+      soundHit();
+      if (destroyed && Math.random() < FRUIT_DROP_CHANCE * 0.4) {
+        spawnFruit();
+      }
+      return true;
+    }
+    if (tile === STEEL || tile === GLASS) {
+      if (this.penetrateGlass) {
+        game.map[row][col] = EMPTY;
+        game.explosions.push(new Explosion(col * TILE + TILE / 2, row * TILE + TILE / 2, false));
+        soundHit();
+      } else {
+        this.alive = false;
+        game.explosions.push(new Explosion(col * TILE + TILE / 2, row * TILE + TILE / 2, false));
+        soundHit();
+        return true;
+      }
+    }
+    return false;
   }
 
   draw(ctx) {

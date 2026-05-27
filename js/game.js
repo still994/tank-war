@@ -51,20 +51,21 @@ function initBrickDamage() {
   game.brickDamage = Array.from({ length: ROWS }, () => Array(COLS).fill(null));
 }
 
-// Apply 1/3 pre-damage to eagle protection bricks (outer side chipped)
+// Apply pre-damage to eagle protection bricks (outer side chipped)
+// Corner bricks: top half removed so they don't protrude above the side bricks
 function initEagleBricksDamage() {
   // Damage direction maps to which side shows damage:
   // DIR.UP → bottom, DIR.DOWN → top, DIR.LEFT → right, DIR.RIGHT → left
   const ring = [
-    { r: 18, c: 8, dir: DIR.RIGHT },  // top-left, chipped from left
-    { r: 18, c: 9, dir: DIR.DOWN  },  // above, chipped from top
-    { r: 18, c: 10, dir: DIR.LEFT  },  // top-right, chipped from right
-    { r: 19, c: 8, dir: DIR.RIGHT },  // left, chipped from left
-    { r: 19, c: 10, dir: DIR.LEFT  },  // right, chipped from right
+    { r: 18, c: 8, dir: DIR.DOWN,  amount: 0.5 },    // top-left, lower half only
+    { r: 18, c: 9, dir: DIR.DOWN,  amount: 1 / 3 },   // above, chipped from top
+    { r: 18, c: 10, dir: DIR.DOWN, amount: 0.5 },     // top-right, lower half only
+    { r: 19, c: 8, dir: DIR.RIGHT, amount: 1 / 3 },   // left, chipped from left
+    { r: 19, c: 10, dir: DIR.LEFT,  amount: 1 / 3 },   // right, chipped from right
   ];
-  for (const { r, c, dir } of ring) {
+  for (const { r, c, dir, amount } of ring) {
     if (game.map[r] && game.map[r][c] === BRICK) {
-      game.brickDamage[r][c] = { amount: 1 / 3, dirs: [dir] };
+      game.brickDamage[r][c] = { amount, dirs: [dir] };
     }
   }
 }
