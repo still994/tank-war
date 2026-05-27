@@ -264,10 +264,13 @@ class Bullet {
     if (row >= 0 && row < ROWS && col >= 0 && col < COLS) {
       const tile = game.map[row][col];
       if (tile === BRICK) {
-        game.map[row][col] = EMPTY;
+        const destroyed = damageBrick(row, col, this.dir);
         this.alive = false;
-        game.explosions.push(new Explosion(col * TILE + TILE / 2, row * TILE + TILE / 2, false));
+        game.explosions.push(new Explosion(col * TILE + TILE / 2, row * TILE + TILE / 2, destroyed));
         soundHit();
+        if (destroyed && Math.random() < FRUIT_DROP_CHANCE * 0.4) {
+          spawnFruit();
+        }
         return;
       }
       // Glass barriers stop normal bullets. Level-3 player bullets break them.

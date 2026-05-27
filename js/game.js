@@ -20,6 +20,7 @@ let game = {
   explosions: [],
   fruits: [],
   map: [],
+  brickDamage: [],
   baseAlive: true,
   eagleProtectionLevel: 0,
   frame: 0,
@@ -44,12 +45,59 @@ function rand(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+// ----- Brick damage system -----
+// brickDamage[row][col] = { amount: 0-1, dirs: [dir, ...] } or null
+function initBrickDamage() {
+  game.brickDamage = Array.from({ length: ROWS }, () => Array(COLS).fill(null));
+}
+
+// Apply 1/3 pre-damage to eagle protection bricks (outer side chipped)
+function initEagleBricksDamage() {
+  // Damage direction maps to which side shows damage:
+  // DIR.UP → bottom, DIR.DOWN → top, DIR.LEFT → right, DIR.RIGHT → left
+  const ring = [
+    { r: 18, c: 8, dir: DIR.RIGHT },  // top-left, chipped from left
+    { r: 18, c: 9, dir: DIR.DOWN  },  // above, chipped from top
+    { r: 18, c: 10, dir: DIR.LEFT  },  // top-right, chipped from right
+    { r: 19, c: 8, dir: DIR.RIGHT },  // left, chipped from left
+    { r: 19, c: 10, dir: DIR.LEFT  },  // right, chipped from right
+  ];
+  for (const { r, c, dir } of ring) {
+    if (game.map[r] && game.map[r][c] === BRICK) {
+      game.brickDamage[r][c] = { amount: 1 / 3, dirs: [dir] };
+    }
+  }
+}
+
+// Damage a brick at (row, col) from bullet direction.
+// Returns true if the brick was fully destroyed.
+function damageBrick(row, col, dir) {
+  if (!game.brickDamage[row]) return false;
+  let dmg = game.brickDamage[row][col];
+  if (!dmg) {
+    dmg = { amount: 0, dirs: [] };
+    game.brickDamage[row][col] = dmg;
+  }
+  // Same direction as a previous hit → +1/3; different direction → +1/2
+  const sameDir = dmg.dirs.includes(dir);
+  dmg.amount += sameDir ? 1 / 3 : 1 / 2;
+  if (!sameDir) dmg.dirs.push(dir);
+  if (dmg.amount >= 1.0) {
+    game.map[row][col] = EMPTY;
+    game.brickDamage[row][col] = null;
+    return true;
+  }
+  return false;
+}
+
 // ----- Map -----
 function loadMap() {
   const idx = (game.level - 1) % MAPS.length;
   game.map = MAPS[idx].map(row => [...row]);
+  initBrickDamage();
   game.baseAlive = true;
   applyEagleProtection();
+  initEagleBricksDamage();
 }
 
 function getLevelSettings(level) {
@@ -228,15 +276,16 @@ function grantTemporaryInvincibility(frames = FRUIT_INVINCIBLE_FRAMES) {
 
 function applyEagleProtection() {
   if (!game.map || game.eagleProtectionLevel <= 0) return;
-  // One ring of indestructible steel around the eagle
+  // One ring of indestructible steel around the 1-tile eagle
   const tile = STEEL;
   const protectionCells = [
-    [18, 8], [18, 9], [18, 10], [18, 11],
-    [19, 8], [19, 11],
+    [18, 8], [18, 9], [18, 10],  // top row
+    [19, 8], [19, 10],            // left, right
   ];
   for (const [row, col] of protectionCells) {
     if (row >= 0 && row < ROWS && col >= 0 && col < COLS) {
       game.map[row][col] = tile;
+      game.brickDamage[row][col] = null; // clear any damage state
     }
   }
 }

@@ -30,7 +30,7 @@ const BASE_COL = 9;
 const BASE_ROW = 19;
 const BASE_X = BASE_COL * TILE;
 const BASE_Y = BASE_ROW * TILE;
-const BASE_W = TILE * 2;
+const BASE_W = TILE;
 const BASE_H = TILE;
 
 // spawn points for enemies (x, y)
@@ -73,8 +73,8 @@ const IMAGE_PATHS = {
   tiles: {
     [BRICK]: 'images/砖块.jpg',
     [STEEL]: 'images/square6.jpg',
-    [GRASS]: 'images/square3.jpg',
-    [GLASS]: 'images/square2.jpg',
+    [GRASS]: 'images/草丛.jpg',
+    [GLASS]: 'images/玻璃.jpg',
   },
   eagle: 'images/老鹰.jpg',
   explosionSmall: [

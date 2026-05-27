@@ -40,20 +40,9 @@ function drawGame() {
       const y = r * TILE;
 
       if (tile === BRICK) {
-        if (drawImageAsset(ctx, IMAGE_PATHS.tiles[BRICK], x, y, TILE, TILE)) continue;
-        ctx.fillStyle = '#8B4513';
-        ctx.fillRect(x, y, TILE, TILE);
-        ctx.strokeStyle = '#6B3410';
-        ctx.lineWidth = 1;
-        const h = TILE / 2;
-        ctx.strokeRect(x, y, h, h);
-        ctx.strokeRect(x + h, y, h, h);
-        ctx.strokeRect(x, y + h, h, h);
-        ctx.strokeRect(x + h, y + h, h, h);
-        ctx.fillStyle = 'rgba(200, 120, 50, 0.2)';
-        ctx.fillRect(x, y, TILE, 2);
+        drawBrickTile(x, y, r, c);
       } else if (tile === STEEL) {
-        drawGlassTile(x, y);
+        drawSteelTile(x, y);
       } else if (tile === GLASS) {
         drawGlassTile(x, y);
       } else if (tile === RIVER) {
@@ -86,6 +75,80 @@ function drawGame() {
 }
 
 // ---------------------------------------------------------------
+//  Brick tile with partial damage
+// ---------------------------------------------------------------
+function drawBrickTile(x, y, r, c) {
+  const img = getImage(IMAGE_PATHS.tiles[BRICK]);
+  const canDraw = img && img.complete && img.naturalWidth > 0;
+
+  if (canDraw) {
+    ctx.drawImage(img, x, y, TILE, TILE);
+  } else {
+    // Fallback
+    ctx.fillStyle = '#8B4513';
+    ctx.fillRect(x, y, TILE, TILE);
+    ctx.strokeStyle = '#6B3410';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x, y, TILE / 2, TILE / 2);
+    ctx.strokeRect(x + TILE / 2, y, TILE / 2, TILE / 2);
+    ctx.strokeRect(x, y + TILE / 2, TILE / 2, TILE / 2);
+    ctx.strokeRect(x + TILE / 2, y + TILE / 2, TILE / 2, TILE / 2);
+  }
+
+  // Overlay damage — show missing chunks from the side the bullet hit
+  // (the impact side, i.e. the side closest to the tank that fired)
+  const dmg = game.brickDamage[r] && game.brickDamage[r][c];
+  if (!dmg || dmg.amount <= 0) return;
+
+  ctx.fillStyle = '#1a1a2e'; // match canvas background
+  const dirs = dmg.dirs;
+  for (let i = 0; i < dirs.length; i++) {
+    const dir = dirs[i];
+    const isLastDifferent = (i === dirs.length - 1 && dirs.length >= 2);
+    const portion = isLastDifferent ? 0.5 : 1 / 3;
+    // Damage appears on the side the bullet came FROM (opposite to bullet dir)
+    switch (dir) {
+      case DIR.UP:    // bullet from below → damage bottom
+        ctx.fillRect(x, y + TILE * (1 - portion), TILE, TILE * portion);
+        break;
+      case DIR.DOWN:  // bullet from above → damage top
+        ctx.fillRect(x, y, TILE, TILE * portion);
+        break;
+      case DIR.LEFT:  // bullet from right → damage right
+        ctx.fillRect(x + TILE * (1 - portion), y, TILE * portion, TILE);
+        break;
+      case DIR.RIGHT: // bullet from left → damage left
+        ctx.fillRect(x, y, TILE * portion, TILE);
+        break;
+    }
+  }
+  // For same-direction double-hit (amount≈2/3, 1 dir), show the larger chunk
+  if (dirs.length === 1 && dmg.amount >= 0.5) {
+    const dir = dirs[0];
+    // Damage appears on the side the bullet came FROM
+    switch (dir) {
+      case DIR.UP:    // bullet from below → damage bottom 2/3
+        ctx.fillRect(x, y + TILE * (1 / 3), TILE, TILE * (2 / 3)); break;
+      case DIR.DOWN:  // bullet from above → damage top 2/3
+        ctx.fillRect(x, y, TILE, TILE * (2 / 3)); break;
+      case DIR.LEFT:  // bullet from right → damage right 2/3
+        ctx.fillRect(x + TILE * (1 / 3), y, TILE * (2 / 3), TILE); break;
+      case DIR.RIGHT: // bullet from left → damage left 2/3
+        ctx.fillRect(x, y, TILE * (2 / 3), TILE); break;
+    }
+  }
+}
+
+// ---------------------------------------------------------------
+//  Steel tile
+// ---------------------------------------------------------------
+function drawSteelTile(x, y) {
+  if (drawImageAsset(ctx, IMAGE_PATHS.tiles[STEEL], x, y, TILE, TILE)) return;
+  // Fallback: same as glass
+  drawGlassFallback(x, y);
+}
+
+// ---------------------------------------------------------------
 //  River decoration
 // ---------------------------------------------------------------
 function drawRiverTile(x, y) {
@@ -115,6 +178,11 @@ function drawRiverTile(x, y) {
 //  Glass barrier
 // ---------------------------------------------------------------
 function drawGlassTile(x, y, size = TILE) {
+  if (drawImageAsset(ctx, IMAGE_PATHS.tiles[GLASS], x, y, size, size)) return;
+  drawGlassFallback(x, y, size);
+}
+
+function drawGlassFallback(x, y, size = TILE) {
   const grad = ctx.createLinearGradient(x, y, x + size, y + size);
   grad.addColorStop(0, 'rgba(230, 252, 255, 0.62)');
   grad.addColorStop(0.45, 'rgba(94, 205, 255, 0.42)');
@@ -148,6 +216,8 @@ function drawGlassTile(x, y, size = TILE) {
 //  Grass tile (drawn on top of everything)
 // ---------------------------------------------------------------
 function drawGrass(x, y) {
+  if (drawImageAsset(ctx, IMAGE_PATHS.tiles[GRASS], x, y, TILE, TILE)) return;
+
   const base = ctx.createLinearGradient(x, y, x, y + TILE);
   base.addColorStop(0, '#295f20');
   base.addColorStop(1, '#143a16');
@@ -207,12 +277,12 @@ function drawBase() {
   } else {
     // Destroyed
     ctx.fillStyle = '#333';
-    ctx.fillRect(bx + 4, by + 4, TILE * 2 - 8, TILE - 8);
+    ctx.fillRect(bx + 4, by + 4, TILE - 8, TILE - 8);
     ctx.fillStyle = '#555';
-    ctx.fillRect(bx + 2, by + TILE - 4, TILE * 2 - 4, 4);
+    ctx.fillRect(bx + 2, by + TILE - 4, TILE - 4, 4);
     ctx.fillStyle = '#444';
     for (let i = 0; i < 5; i++) {
-      ctx.fillRect(bx + rand(2, TILE * 2 - 10), by + rand(2, TILE - 10), rand(4, 8), rand(3, 6));
+      ctx.fillRect(bx + rand(2, TILE - 10), by + rand(2, TILE - 10), rand(4, 8), rand(3, 6));
     }
   }
 }
