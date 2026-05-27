@@ -50,7 +50,7 @@ const FRUIT_LIFE = 1;
 const FRUIT_BOMB = 2;
 const FRUIT_INVINCIBLE = 3;
 const FRUIT_PROTECT = 4;
-const FRUIT_DROP_CHANCE = 0.16;
+const FRUIT_DROP_CHANCE = 0.22;
 const FRUIT_LIFETIME = 600; // frames (~10s at 60fps)
 const FRUIT_INVINCIBLE_FRAMES = 240; // 4s at 60fps
 

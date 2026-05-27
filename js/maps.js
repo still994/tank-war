@@ -71,6 +71,12 @@ function level1() {
   fillRect(m, 10, 8, 11, 11, BRICK);
   fillRect(m, 5, 4, 6, 5, BRICK);
   fillRect(m, 5, 14, 6, 15, BRICK);
+  fillRect(m, 1, 7, 1, 8, GLASS);
+  fillRect(m, 1, 11, 1, 12, GLASS);
+  fillRect(m, 2, 0, 2, 2, RIVER);
+  fillRect(m, 2, 17, 2, 19, RIVER);
+  fillRect(m, 8, 4, 8, 6, GRASS);
+  fillRect(m, 8, 13, 8, 15, GRASS);
   return done(m);
 }
 
@@ -85,6 +91,12 @@ function level2() {
   fillRect(m, 10, 8, 10, 11, BRICK);
   fillRect(m, 4, 6, 4, 13, BRICK);
   fillRect(m, 3, 8, 3, 11, BRICK);
+  fillRect(m, 1, 0, 1, 2, RIVER);
+  fillRect(m, 1, 17, 1, 19, RIVER);
+  fillRect(m, 7, 0, 7, 1, GLASS);
+  fillRect(m, 7, 18, 7, 19, GLASS);
+  fillRect(m, 12, 6, 12, 7, GRASS);
+  fillRect(m, 12, 12, 12, 13, GRASS);
   return done(m);
 }
 
@@ -119,6 +131,10 @@ function level4() {
   fillRect(m, 4, 8, 5, 11, GRASS);
   fillRect(m, 3, 2, 3, 4, BRICK);
   fillRect(m, 3, 15, 3, 17, BRICK);
+  fillRect(m, 1, 0, 1, 2, RIVER);
+  fillRect(m, 1, 17, 1, 19, RIVER);
+  fillRect(m, 6, 0, 6, 1, GLASS);
+  fillRect(m, 6, 18, 6, 19, GLASS);
   return done(m);
 }
 
@@ -134,6 +150,8 @@ function level5() {
   fillRect(m, 11, 5, 12, 6, BRICK);
   fillRect(m, 11, 13, 12, 14, BRICK);
   fillRect(m, 14, 7, 14, 12, GRASS);
+  fillRect(m, 1, 6, 1, 7, GLASS);
+  fillRect(m, 1, 12, 1, 13, GLASS);
   return done(m);
 }
 
@@ -150,6 +168,10 @@ function level6() {
   fillRect(m, 3, 2, 3, 5, BRICK);
   fillRect(m, 3, 14, 3, 17, BRICK);
   fillRect(m, 4, 8, 4, 11, GRASS);
+  fillRect(m, 1, 0, 1, 2, RIVER);
+  fillRect(m, 1, 17, 1, 19, RIVER);
+  fillRect(m, 6, 0, 6, 1, GLASS);
+  fillRect(m, 6, 18, 6, 19, GLASS);
   return done(m);
 }
 
@@ -169,6 +191,8 @@ function level7() {
   fillRect(m, 7, 8, 7, 11, BRICK);
   fillRect(m, 5, 1, 6, 3, GRASS);
   fillRect(m, 5, 16, 6, 18, GRASS);
+  fillRect(m, 1, 6, 1, 7, RIVER);
+  fillRect(m, 1, 12, 1, 13, RIVER);
   return done(m);
 }
 
@@ -184,6 +208,8 @@ function level8() {
   fillRect(m, 8, 4, 9, 5, GLASS);
   fillRect(m, 8, 14, 9, 15, GLASS);
   fillRect(m, 2, 7, 3, 12, GRASS);
+  fillRect(m, 1, 0, 1, 2, RIVER);
+  fillRect(m, 1, 17, 1, 19, RIVER);
   return done(m);
 }
 
@@ -200,6 +226,7 @@ function level9() {
   fillRect(m, 10, 17, 10, 19, BRICK);
   fillRect(m, 14, 3, 15, 5, GRASS);
   fillRect(m, 14, 14, 15, 16, GRASS);
+  fillRect(m, 1, 8, 1, 11, RIVER);
   return done(m);
 }
 
@@ -216,6 +243,8 @@ function level10() {
   fillRect(m, 4, 3, 5, 4, BRICK);
   fillRect(m, 4, 15, 5, 16, BRICK);
   fillRect(m, 11, 8, 12, 11, GLASS);
+  fillRect(m, 2, 0, 2, 1, RIVER);
+  fillRect(m, 2, 18, 2, 19, RIVER);
   return done(m);
 }
 
@@ -235,6 +264,8 @@ function level11() {
   fillRect(m, 6, 9, 12, 9, BRICK);
   m[9][9] = EMPTY;
   fillRect(m, 2, 8, 3, 11, GRASS);
+  fillRect(m, 7, 0, 7, 1, RIVER);
+  fillRect(m, 7, 18, 7, 19, RIVER);
   return done(m);
 }
 
@@ -251,6 +282,7 @@ function level12() {
   m[12][9] = EMPTY; m[12][10] = EMPTY;
   fillRect(m, 5, 7, 5, 12, RIVER);
   fillRect(m, 15, 2, 15, 17, RIVER);
+  fillRect(m, 9, 8, 9, 11, GRASS);
   return done(m);
 }
 
@@ -289,6 +321,8 @@ function level14() {
   fillRect(m, 2, 5, 2, 14, BRICK);
   m[2][9] = EMPTY; m[2][10] = EMPTY;
   fillRect(m, 0, 6, 1, 13, GRASS);
+  fillRect(m, 7, 0, 7, 1, RIVER);
+  fillRect(m, 7, 18, 7, 19, RIVER);
   return done(m);
 }
 
@@ -306,6 +340,8 @@ function level15() {
   fillRect(m, 7, 16, 7, 17, BRICK);
   m[3][9] = EMPTY; m[3][10] = EMPTY;
   fillRect(m, 1, 7, 2, 12, GRASS);
+  fillRect(m, 14, 6, 14, 7, RIVER);
+  fillRect(m, 14, 12, 14, 13, RIVER);
   return done(m);
 }
 
@@ -346,6 +382,8 @@ function level17() {
   fillRect(m, 2, 9, 2, 10, GRASS);
   fillRect(m, 7, 2, 8, 4, GRASS);
   fillRect(m, 7, 15, 8, 17, GRASS);
+  fillRect(m, 13, 0, 13, 1, RIVER);
+  fillRect(m, 13, 18, 13, 19, RIVER);
   return done(m);
 }
 
@@ -366,6 +404,8 @@ function level18() {
   fillRect(m, 12, 7, 13, 12, BRICK);
   fillRect(m, 0, 1, 1, 5, GRASS);
   fillRect(m, 0, 14, 1, 18, GRASS);
+  fillRect(m, 7, 0, 7, 1, RIVER);
+  fillRect(m, 7, 18, 7, 19, RIVER);
   return done(m);
 }
 
@@ -384,6 +424,8 @@ function level19() {
   fillRect(m, 3, 8, 3, 11, RIVER);
   fillRect(m, 14, 0, 15, 19, RIVER);
   m[14][9] = EMPTY; m[14][10] = EMPTY;
+  fillRect(m, 1, 4, 1, 6, GRASS);
+  fillRect(m, 1, 13, 1, 15, GRASS);
   return done(m);
 }
 
@@ -410,6 +452,8 @@ function level20() {
   fillRect(m, 11, 8, 12, 11, BRICK);
   fillRect(m, 0, 7, 1, 12, GRASS);
   fillRect(m, 15, 5, 16, 14, GRASS);
+  fillRect(m, 7, 2, 7, 3, RIVER);
+  fillRect(m, 7, 16, 7, 17, RIVER);
   return done(m);
 }
 

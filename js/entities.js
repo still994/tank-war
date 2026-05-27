@@ -286,14 +286,25 @@ class Bullet {
       // Grass — bullet passes through (handled implicitly)
     }
 
-    // Check base collision
-    if (game.baseAlive) {
+    // Check base collision — only player bullets can destroy the base
+    if (game.baseAlive && this.owner === game.player) {
       const b = { x: BASE_X, y: BASE_Y, w: BASE_W, h: BASE_H };
       if (rectOverlap({ x: this.x, y: this.y, w: this.size, h: this.size }, b)) {
         this.alive = false;
         game.baseAlive = false;
         game.explosions.push(new Explosion(BASE_X + BASE_W / 2, BASE_Y + BASE_H / 2, true));
         soundExplode();
+        return;
+      }
+    }
+
+    // Enemy bullet hitting the base — destroy bullet, base survives
+    if (game.baseAlive && this.owner !== game.player) {
+      const b = { x: BASE_X, y: BASE_Y, w: BASE_W, h: BASE_H };
+      if (rectOverlap({ x: this.x, y: this.y, w: this.size, h: this.size }, b)) {
+        this.alive = false;
+        game.explosions.push(new Explosion(this.x + this.size / 2, this.y + this.size / 2, false));
+        soundHit();
         return;
       }
     }
@@ -324,12 +335,18 @@ class Bullet {
 
     // Enemy bullet → player
     if (this.owner !== game.player) {
-      if (game.player && game.player.alive && !game.player.invincible) {
+      if (game.player && game.player.alive) {
         if (rectOverlap(bulletBox, { x: game.player.x, y: game.player.y, w: TANK_SIZE, h: TANK_SIZE })) {
           this.alive = false;
-          game.player.alive = false;
-          game.explosions.push(new Explosion(game.player.x + HALF_TANK, game.player.y + HALF_TANK, true));
-          soundExplode();
+          if (game.player.invincible) {
+            // Bullet is blocked by invincibility shield
+            game.explosions.push(new Explosion(this.x + this.size / 2, this.y + this.size / 2, false));
+            soundHit();
+          } else {
+            game.player.alive = false;
+            game.explosions.push(new Explosion(game.player.x + HALF_TANK, game.player.y + HALF_TANK, true));
+            soundExplode();
+          }
           updateHUD();
         }
       }
@@ -514,17 +531,26 @@ class Tank {
     this.aiShootTimer--;
 
     if (this.aiTimer <= 0) {
-      this.aiTimer = rand(40, 150);
-      if (Math.random() < 0.3 && game.player && game.player.alive) {
+      this.aiTimer = rand(60, 180);
+      // Reduced chase probability for more random movement
+      if (Math.random() < 0.18 && game.player && game.player.alive) {
+        // Avoid heading directly toward the base area
         const dx = game.player.x - this.x;
         const dy = game.player.y - this.y;
-        if (Math.abs(dx) > Math.abs(dy)) {
+        // Bias away from heading straight down toward the base
+        if (Math.abs(dx) > Math.abs(dy) || this.y > BASE_Y - TILE * 4) {
           this.moveDir = dx > 0 ? DIR.RIGHT : DIR.LEFT;
         } else {
           this.moveDir = dy > 0 ? DIR.DOWN : DIR.UP;
         }
       } else {
-        this.moveDir = rand(0, 3);
+        // Favor horizontal / upward movement to reduce base-directed fire
+        const roll = Math.random();
+        if (this.y > BASE_Y - TILE * 6 && roll < 0.45) {
+          this.moveDir = rand(0, 1) === 0 ? DIR.LEFT : DIR.RIGHT;
+        } else {
+          this.moveDir = rand(0, 3);
+        }
       }
     }
 
@@ -540,9 +566,14 @@ class Tank {
     }
 
     if (this.aiShootTimer <= 0) {
-      this.aiShootTimer = rand(30, 90);
-      const bullet = this.shoot();
-      if (bullet) game.bullets.push(bullet);
+      this.aiShootTimer = rand(35, 100);
+      // Reduce chance of shooting directly toward the base
+      const facingBase = this.dir === DIR.DOWN && this.y > BASE_Y - TILE * 7;
+      const shootChance = facingBase ? 0.4 : 1.0;
+      if (Math.random() < shootChance) {
+        const bullet = this.shoot();
+        if (bullet) game.bullets.push(bullet);
+      }
     }
   }
 
