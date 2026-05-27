@@ -183,10 +183,11 @@ function drawBase() {
   const bx = BASE_X, by = BASE_Y;
 
   if (game.baseAlive) {
-    // Flag pole
+    if (drawImageAsset(ctx, IMAGE_PATHS.eagle, bx, by, BASE_W, BASE_H)) return;
+
+    // Fallback: programmatic eagle
     ctx.fillStyle = '#8B4513';
     ctx.fillRect(bx + TILE - 4, by + 4, 4, TILE - 4);
-    // Eagle
     ctx.fillStyle = '#FFD700';
     ctx.shadowColor = '#FFD700';
     ctx.shadowBlur = 10;
@@ -203,11 +204,6 @@ function drawBase() {
     ctx.closePath();
     ctx.fill();
     ctx.shadowBlur = 0;
-    // Platform
-    ctx.fillStyle = '#555';
-    ctx.fillRect(bx, by + TILE - 4, TILE * 2, 4);
-    ctx.fillStyle = '#777';
-    ctx.fillRect(bx + 2, by + TILE - 4, TILE * 2 - 4, 2);
   } else {
     // Destroyed
     ctx.fillStyle = '#333';

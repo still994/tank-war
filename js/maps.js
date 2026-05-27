@@ -44,9 +44,13 @@ function fillCells(map, tile, cells) {
 }
 
 function addBaseBricks(map) {
-  fillRect(map, 18, 6, 18, 12, BRICK);
-  map[19][6] = BRICK;
-  map[19][12] = BRICK;
+  // One-tile ring around the eagle at row 19, cols 9-10
+  map[18][8] = BRICK;
+  map[18][9] = BRICK;
+  map[18][10] = BRICK;
+  map[18][11] = BRICK;
+  map[19][8] = BRICK;
+  map[19][11] = BRICK;
   map[19][9] = EMPTY;
   map[19][10] = EMPTY;
 }

@@ -71,11 +71,12 @@ const IMAGE_PATHS = {
     [DIR.LEFT]: 'images/bulletL.gif',
   },
   tiles: {
-    [BRICK]: 'images/square0.jpg',
+    [BRICK]: 'images/砖块.jpg',
     [STEEL]: 'images/square6.jpg',
     [GRASS]: 'images/square3.jpg',
     [GLASS]: 'images/square2.jpg',
   },
+  eagle: 'images/老鹰.jpg',
   explosionSmall: [
     'images/0.gif', 'images/1.gif', 'images/2.gif', 'images/3.gif',
     'images/4.gif', 'images/5.gif', 'images/6.gif', 'images/7.gif',

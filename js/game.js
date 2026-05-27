@@ -128,6 +128,7 @@ function nextLevel() {
   game.bullets = [];
   game.fruits = [];
   game.spawnTimer = 0;
+  game.eagleProtectionLevel = 0;
   game.state = 'levelComplete';
   game.levelTransitionTimer = 120;
 
@@ -227,7 +228,8 @@ function grantTemporaryInvincibility(frames = FRUIT_INVINCIBLE_FRAMES) {
 
 function applyEagleProtection() {
   if (!game.map || game.eagleProtectionLevel <= 0) return;
-  const tile = game.eagleProtectionLevel >= 2 ? GLASS : BRICK;
+  // One ring of indestructible steel around the eagle
+  const tile = STEEL;
   const protectionCells = [
     [18, 8], [18, 9], [18, 10], [18, 11],
     [19, 8], [19, 11],
