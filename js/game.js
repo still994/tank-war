@@ -78,10 +78,10 @@ function damageBrick(row, col, dir) {
     dmg = { amount: 0, dirs: [] };
     game.brickDamage[row][col] = dmg;
   }
-  // Same direction as a previous hit → +1/3; different direction → +1/2
-  const sameDir = dmg.dirs.includes(dir);
-  dmg.amount += sameDir ? 1 / 3 : 1 / 2;
-  if (!sameDir) dmg.dirs.push(dir);
+  // First hit → +1/3; same direction → +1/3; different direction → +1/2
+  const isNew = dmg.dirs.length === 0 || !dmg.dirs.includes(dir);
+  dmg.amount += isNew ? (dmg.dirs.length === 0 ? 1 / 3 : 1 / 2) : 1 / 3;
+  if (isNew) dmg.dirs.push(dir);
   if (dmg.amount >= 1.0) {
     game.map[row][col] = EMPTY;
     game.brickDamage[row][col] = null;

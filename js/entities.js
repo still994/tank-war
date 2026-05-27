@@ -289,25 +289,14 @@ class Bullet {
       // Grass — bullet passes through (handled implicitly)
     }
 
-    // Check base collision — only player bullets can destroy the base
-    if (game.baseAlive && this.owner === game.player) {
+    // Base collision — any bullet can destroy the base
+    if (game.baseAlive) {
       const b = { x: BASE_X, y: BASE_Y, w: BASE_W, h: BASE_H };
       if (rectOverlap({ x: this.x, y: this.y, w: this.size, h: this.size }, b)) {
         this.alive = false;
         game.baseAlive = false;
         game.explosions.push(new Explosion(BASE_X + BASE_W / 2, BASE_Y + BASE_H / 2, true));
         soundExplode();
-        return;
-      }
-    }
-
-    // Enemy bullet hitting the base — destroy bullet, base survives
-    if (game.baseAlive && this.owner !== game.player) {
-      const b = { x: BASE_X, y: BASE_Y, w: BASE_W, h: BASE_H };
-      if (rectOverlap({ x: this.x, y: this.y, w: this.size, h: this.size }, b)) {
-        this.alive = false;
-        game.explosions.push(new Explosion(this.x + this.size / 2, this.y + this.size / 2, false));
-        soundHit();
         return;
       }
     }
