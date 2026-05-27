@@ -1,0 +1,96 @@
+/* ============================================================
+   STYLE — Tank Game
+   ============================================================ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #1a1a2e;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Courier New', monospace;
+  user-select: none;
+}
+
+.game-wrapper {
+  background: #16213e;
+  padding: 20px 30px 30px;
+  border-radius: 12px;
+  box-shadow: 0 0 40px rgba(0, 255, 65, 0.15), inset 0 0 60px rgba(0, 0, 0, 0.5);
+  border: 2px solid #0f3460;
+}
+
+#hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  background: #0a0a1a;
+  border: 2px solid #0f3460;
+  border-radius: 6px;
+  color: #00ff41;
+  font-size: 16px;
+  font-weight: bold;
+  text-shadow: 0 0 8px rgba(0, 255, 65, 0.5);
+  letter-spacing: 1px;
+}
+
+#hud .hud-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+#hud .lives-display {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+#hud .life-icon {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  background: #ffd700;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%,
+                     79% 91%, 50% 70%, 21% 91%, 32% 57%,
+                     2% 35%, 39% 35%);
+}
+
+canvas {
+  display: block;
+  border: 3px solid #0f3460;
+  border-radius: 4px;
+  background: #1a1a2e;
+  image-rendering: pixelated;
+  width: 640px;
+  height: 640px;
+}
+
+.controls-info {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  color: #4a6fa5;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+.controls-info kbd {
+  background: #0a0a1a;
+  border: 1px solid #0f3460;
+  border-radius: 3px;
+  padding: 1px 8px;
+  color: #00ff41;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+@media (max-width: 700px) {
+  .game-wrapper { padding: 10px; }
+  canvas { width: 100%; height: auto; aspect-ratio: 1; }
+  #hud { font-size: 12px; flex-wrap: wrap; gap: 4px; }
+  .controls-info { font-size: 11px; flex-wrap: wrap; gap: 4px; }
+}

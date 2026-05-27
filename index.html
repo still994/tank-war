@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>坦克大战</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="game-wrapper">
+  <div id="hud">
+    <span id="scoreDisplay">SCORE: 0</span>
+    <div class="hud-right">
+      <span id="enemyDisplay">ENEMIES: 20</span>
+      <span class="lives-display">
+        <span id="levelDisplay">LV:1</span>&nbsp;&nbsp;
+        <span id="tankLevelDisplay"></span>&nbsp;&nbsp;
+        <span id="livesDisplay"></span>
+      </span>
+    </div>
+  </div>
+
+  <canvas id="gameCanvas" width="640" height="640"></canvas>
+
+  <div class="controls-info">
+    <span>
+      移动: <kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd>
+      或 <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>
+    </span>
+    <span>射击: <kbd>空格</kbd> 或 <kbd>J</kbd></span>
+    <span><kbd>P</kbd> 暂停</span>
+  </div>
+</div>
+
+<!-- Scripts loaded in order — each adds to global scope -->
+<script src="js/constants.js"></script>
+<script src="js/maps.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/entities.js"></script>
+<script src="js/rendering.js"></script>
+<script src="js/game.js"></script>
+
+</body>
+</html>
